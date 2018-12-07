@@ -1,23 +1,24 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package gcdlcm.program;
 
 import gcdlcm.controllers.FlowController;
+import java.io.IOException;
+import tcpserver.TcpServer;
 
 /**
- * Greatest common divisor and least common multiple console calculator
- * 
- * @author Piotr Paczuła
- * @version 1.0
+ *
+ * @author Piotr
  */
 public class Program {
-
-    
-    /**
-     * @param args the command line arguments which are numbers separated by spaces 
-     * used for calculating Greatest Common Divisor and Least Common Multiple
-     */
-    public static void main(String[] args) {
-       FlowController program = new FlowController();
-       program.run(args);
+    @SuppressWarnings("empty-statement")
+    public static void main(String[] args) throws IOException{
+        TcpServer server = new TcpServer();
+        FlowController flow = new FlowController(server);
+        while(!flow.run());
+        
     }
-    
 }

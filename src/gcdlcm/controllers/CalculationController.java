@@ -6,18 +6,24 @@ import gcdlcm.models.GreatestCommonDivisor;
 import gcdlcm.models.LeastCommonMultiple;
 import gcdlcm.views.ResultView;
 import java.util.List;
+import tcpserver.TcpServer;
 
 /**
  * Manages application calculations
  * @author Piotr Paczuła
- * @version 1.0
+ * @version 1.2
  */
 public class CalculationController {
     /**
      * Used for displaying information.
      */
-    private final ResultView resultView = new ResultView();
+    private final ResultView resultView;
  
+    private TcpServer server;
+    public CalculationController(TcpServer server){
+        this.server = server;
+        this.resultView = new ResultView(server);
+    }
     /**
      * Used for calculating Greatest Common Divisor and Least Common Multiple 
      * and returning the result to view.

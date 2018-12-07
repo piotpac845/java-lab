@@ -1,18 +1,25 @@
 package gcdlcm.views;
 
-import java.util.Scanner;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import tcpserver.TcpServer;
 
 /**
  * View representing results, errors and input requests in user's console
  * 
  * @author Piotr Paczuła
- *
+ * @version 1.2
  */
 public class ResultView {
     /**
-     * Used for reading user's input from console
+     * Used for read and write
      */
-    private final Scanner reader = new Scanner(System.in);
+    private final TcpServer server;
+    
+    public ResultView(TcpServer server) {
+       this.server = server;
+    }
     
     /**
      * Prints given parameters to user's console.
@@ -21,11 +28,13 @@ public class ResultView {
      * @param lcm Least common multiple
      */
     public void printResult(int gcm, int lcm){
-           System.out.println("Twoje wyniki to:");
-           System.out.print("NWD: ");
-           System.out.println(gcm);
-           System.out.print("NWW: ");
-           System.out.println(lcm);
+        try {
+            server.write("Twoje wyniki to: ");
+            server.write("NWD: "+gcm);
+            server.write("NWW: "+lcm);
+        } catch (IOException ex) {
+            Logger.getLogger(ResultView.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     /**
      * Prints input request and reads input from user's console.
@@ -33,39 +42,41 @@ public class ResultView {
      * 
      * @return new array of strings
      */
-    public String[] getInput(){
-        System.out.println("Wprowadź liczby oddzielone spacjami lub zakończ program. [ q ]");
-        return reader.nextLine().split(" ");
+    public String[] getInput() {
+        try {
+            server.write("Wprowadź liczby oddzielone spacjami lub zakończ program. [ q ]");
+            return server.read().split(" ");
+        } catch (IOException ex) {
+            Logger.getLogger(ResultView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return new String[]{};
     }
     
     /**
      * Prints format error and reads input from user's console.
      * @return new array of strings
      */
-    public String[] wrongInputFormat()
+    public void wrongInputFormat()
     {
-           System.out.println("Niepoprawny format argumentów.");
-           return getInput();
+        
+        try {
+            server.write("Niepoprawny format argumentów.");
+        } catch (IOException ex) {
+            Logger.getLogger(ResultView.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**
      * Prints length error and reads input from user's console.
      * @return new array of strings
      */
-    public String[] tooShortInputArray()
+    public void tooShortInputArray() 
     {
-         System.out.println("Za mało argumentów. Potrzeba conajmniej dwóch liczb do wykonania obliczeń.");
-         return getInput();
-    }
-    
-    /**
-     * Gets data set for new calculation or exit parameter
-     * @return new array of strings
-     */
-    public String[] anotherCalc()
-    {
-         System.out.println("");
-         return getInput();
+        try {
+            server.write("Za mało argumentów. Potrzeba conajmniej dwóch liczb do wykonania obliczeń.");
+        } catch (IOException ex) {
+            Logger.getLogger(ResultView.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**
@@ -73,7 +84,12 @@ public class ResultView {
      */
     public void endView()
     {
-         System.out.println("Koniec obliczeń.");
+        try {
+            server.write("Koniec obliczeń.");
+            server.write("quit");
+        } catch (IOException ex) {
+            Logger.getLogger(ResultView.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**
@@ -82,8 +98,11 @@ public class ResultView {
      */
     public void exceptionMessage(String excMessage)
     {
-        System.out.print("Error: ");
-        System.out.println(excMessage);
+        try {
+            server.write("Error: "+excMessage);
+        } catch (IOException ex) {
+            Logger.getLogger(ResultView.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }
