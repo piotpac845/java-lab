@@ -8,14 +8,14 @@ import gcdlcm.exceptions.ZeroNumberException;
 /**
  * Used for calculating LCM of numbers
  * @author Piotr Paczuła
- * @version 1.0
+ * @version 1.2
  */
 public class LeastCommonMultiple {
     
     /**
      * List of numbers used for calculating LCM
      */
-    private List<Integer> numbers;  
+    private List<Integer> numbers = new ArrayList<>();  
     
     /**
      * Object used for calculating GCD 
@@ -25,12 +25,15 @@ public class LeastCommonMultiple {
     
     /**
      * Constructor initializes GCD object and list of numbers
-     * @param numbers list of numbers used for calculating LCM
      */
-    public LeastCommonMultiple(List<Integer> numbers)
+    public LeastCommonMultiple()
     {
-        this.numbers = numbers;
         gcDivisor = new GreatestCommonDivisor();
+    }
+    
+    
+    public void setNumbers(List<Integer> numbers) {
+        this.numbers = numbers;
     }
     /** 
      * Method returns least common multiple given List of Integers

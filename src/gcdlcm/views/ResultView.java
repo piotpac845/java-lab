@@ -1,12 +1,9 @@
 package gcdlcm.views;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import tcpserver.TcpServer;
 
 /**
- * View representing results, errors and input requests in user's console
+ * View representing results, errors and input requests in user's client
  * 
  * @author Piotr Paczuła
  * @version 1.2
@@ -28,68 +25,61 @@ public class ResultView {
      * @param lcm Least common multiple
      */
     public void printResult(int gcm, int lcm){
-        try {
-            server.write("Twoje wyniki to: ");
-            server.write("NWD: "+gcm);
-            server.write("NWW: "+lcm);
-        } catch (IOException ex) {
-            Logger.getLogger(ResultView.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        server.write("Twoje wyniki to: ");
+        server.write("NWD: "+gcm);
+        server.write("NWW: "+lcm);
     }
     /**
-     * Prints input request and reads input from user's console.
+     * Prints input request and reads input from user's client.
      * Then splits it to array of strings.
      * 
      * @return new array of strings
      */
     public String[] getInput() {
-        try {
-            server.write("Wprowadź liczby oddzielone spacjami lub zakończ program. [ q ]");
-            return server.read().split(" ");
-        } catch (IOException ex) {
-            Logger.getLogger(ResultView.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return new String[]{};
+        server.write("Wprowadź liczby oddzielone spacjami lub zakończ program. [ q ]");
+        return server.read().split(" ");
     }
     
     /**
-     * Prints format error and reads input from user's console.
-     * @return new array of strings
+     * Prints format error to user's client.
      */
     public void wrongInputFormat()
     {
-        
-        try {
-            server.write("Niepoprawny format argumentów.");
-        } catch (IOException ex) {
-            Logger.getLogger(ResultView.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        server.write("Niepoprawny format argumentów.");
     }
     
     /**
-     * Prints length error and reads input from user's console.
-     * @return new array of strings
+     * Prints length error to user's client.
      */
     public void tooShortInputArray() 
     {
-        try {
-            server.write("Za mało argumentów. Potrzeba conajmniej dwóch liczb do wykonania obliczeń.");
-        } catch (IOException ex) {
-            Logger.getLogger(ResultView.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        server.write("Za mało argumentów. Potrzeba conajmniej dwóch liczb do wykonania obliczeń.");
     }
+    
+    /*
+    * Prints help message to user's client.
+    */
+    public void helpView() {
+        server.write("Opis funkcjonalności:");
+        server.write("'help' - opis poleceń.");
+        server.write("'q' - zakończ sesje");
+        server.write("'Q' - zakończ program główny");
+        server.write("Aby wprowadzić liczby potrzebne do obliczeń oddziel je spacjami we wskazany sposób: '10 20 412 44'");
+        server.write("");
+        server.write("Dla programów typu puTTy:");
+        server.write("Każdą wiadomość należy potwierdzić wyrazeniem 'ready'.");
+        server.write("W przypadku uzyskania wiadomości 'input' oczekiwane są dane od użytkownika np. komendy 'q'/'Q'/zestaw liczb...");
+        server.write("");
+    }
+    
+    
     
     /**
      * Prints program's end message.
      */
-    public void endView()
-    {
-        try {
-            server.write("Koniec obliczeń.");
-            server.write("quit");
-        } catch (IOException ex) {
-            Logger.getLogger(ResultView.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void endView() {
+        server.write("Koniec obliczeń.");
+        server.write("quit");
     }
     
     /**
@@ -98,11 +88,7 @@ public class ResultView {
      */
     public void exceptionMessage(String excMessage)
     {
-        try {
-            server.write("Error: "+excMessage);
-        } catch (IOException ex) {
-            Logger.getLogger(ResultView.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        server.write("Error: "+excMessage);
     }
     
 }

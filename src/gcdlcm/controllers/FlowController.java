@@ -1,11 +1,7 @@
 package gcdlcm.controllers;
 
 import gcdlcm.views.ResultView;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.util.Pair;
 import tcpserver.TcpServer;
 
@@ -24,13 +20,13 @@ public class FlowController {
     /**
      * Used for managing user's inputs.
      */
-    private InputController input;
+    private final InputController input;
     
     /**
      * Used for displaying information.
      */
-    private ResultView view;
-    private TcpServer server;
+    private final ResultView view;
+    private final TcpServer server;
     
     public FlowController(TcpServer server){
         this.server = server;
@@ -42,7 +38,6 @@ public class FlowController {
     
     /**
      * Main method responsible for application start
-     * @param args the command line arguments which are numbers separated by spaces
      */
     public boolean run()
     {
@@ -60,6 +55,9 @@ public class FlowController {
                 case correct:
                     calculator.calculate(numbers);
                     break;
+                case help:
+                    view.helpView();
+                    break;
                 case endProgram:
                     quitProgram = true;
                     break;
@@ -71,6 +69,7 @@ public class FlowController {
             }
         }while(!(quitSession || quitProgram));
         view.endView();
+        server.closeConnection();
         return quitProgram;
         //view.endView();
     }

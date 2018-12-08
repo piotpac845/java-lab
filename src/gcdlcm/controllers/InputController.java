@@ -23,14 +23,14 @@ public class InputController {
         this.server = server;
         this.view = new ResultView(server);
     }
+    
+    
     /**
      * Checks if user wants to quit application
      * @param args user's input
-     * @return True if application should end.
+     * @return State of application given user's input.
      */
-
-    
-    private State checkQuitCondition(String[] args)
+    private State getApplicationState(String[] args)
     {
         if(args.length == 1)
                 {
@@ -40,6 +40,11 @@ public class InputController {
                            return State.endSession;
                        case "Q":
                            return State.endProgram;
+                       case "help":
+                       case "HELP":
+                       case "h":
+                       case "H":
+                           return State.help;
                        default:
                            return State.correct;
                    }
@@ -50,16 +55,16 @@ public class InputController {
    
     
     /**
-     * Gets valid input from user and converts it to list of integers
+     * Gets valid input from user and converts it to list of integers with app state
      * @param args user's input. Valid options are 
-     * numbers separated by spaces or "q"/"Q".
-     * @return List of integer 
+     * numbers separated by spaces or "q"/"Q" etc.
+     * @return Pair of app state and list of integers 
      */
     @SafeVarargs
     public final Pair<State, List<Integer>> getInput(String... args){
         String[] argmunets = args;
         List<Integer> array = new ArrayList<>();
-        State state = checkQuitCondition(argmunets);
+        State state = getApplicationState(argmunets);
 
             if(state==State.correct)
             {
@@ -83,7 +88,7 @@ public class InputController {
                     state = State.incorrectFormat;
                     view.wrongInputFormat();
                 }
-        }
+            }
         return new Pair(state,array);
     }
 }

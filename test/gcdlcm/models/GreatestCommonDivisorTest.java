@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gcdlcm.models;
 
 import gcdlcm.exceptions.TooShortArrayException;
@@ -16,7 +11,7 @@ import static org.junit.Assert.*;
 /**
  * Test suite for GreatestCommonDivisor class
  * @author Piotr Paczuła
- * @version 1.0
+ * @version 1.2
  */
 public class GreatestCommonDivisorTest {
     

@@ -18,11 +18,17 @@ public class CalculationController {
      * Used for displaying information.
      */
     private final ResultView resultView;
- 
-    private TcpServer server;
+    private final GreatestCommonDivisor gcdCalculator;
+    private final LeastCommonMultiple lcmCalculator;
+    private final TcpServer server;
+    /**
+    * @param server TCP server used for communication with client.
+    */
     public CalculationController(TcpServer server){
         this.server = server;
         this.resultView = new ResultView(server);
+        gcdCalculator = new GreatestCommonDivisor();
+        lcmCalculator  = new LeastCommonMultiple();
     }
     /**
      * Used for calculating Greatest Common Divisor and Least Common Multiple 
@@ -32,8 +38,9 @@ public class CalculationController {
     public void calculate(List<Integer> numbers)
     {
         int gcm, lcm;
-        GreatestCommonDivisor gcdCalculator = new GreatestCommonDivisor(numbers);
-        LeastCommonMultiple lcmCalculator  = new LeastCommonMultiple(numbers);
+        //GreatestCommonDivisor gcdCalculator = new GreatestCommonDivisor(numbers);
+        gcdCalculator.setNumbers(numbers);
+        lcmCalculator.setNumbers(numbers);
         try
         {
            gcm = gcdCalculator.calculate();

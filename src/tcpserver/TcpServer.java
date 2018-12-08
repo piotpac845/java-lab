@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tcpserver;
 
-import gcdlcm.controllers.FlowController;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -21,10 +15,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author Piotr
+ * Responsible for handling TCP connection with client applications.
+ * @author Piotr Paczuła
+ * @version 1.0
  */
-public class TcpServer {
+public final class TcpServer {
 
    private final ServerSocket server;
    private Socket connectionSocket;
@@ -38,47 +33,93 @@ public class TcpServer {
         server = new ServerSocket(port);
         resetConnection();
     }
-   public void resetConnection() throws IOException {
-       connectionSocket = server.accept();
-       System.out.println("Connection started");
-   }
-   
-   public String read() throws IOException {
-       if(connectionSocket.isClosed())
-           resetConnection();
-        requestInput();
-        BufferedReader input = new BufferedReader (new InputStreamReader(connectionSocket.getInputStream()));
-        message = input.readLine();
-        System.out.println("Server got: "+message);
-        return message;
+    
+    /**
+     * Closes socket connection
+     */
+    public void closeConnection(){
+       try {
+           connectionSocket.close();
+           System.out.println("Connection closed");
+       } catch (IOException ex) {
+           Logger.getLogger(TcpServer.class.getName()).log(Level.SEVERE, null, ex);
+       }
+       
     }
-   private void requestInput() throws IOException{
-        if(connectionSocket.isClosed())
-             resetConnection();
-       PrintWriter output;
-        output = new PrintWriter(
-                new BufferedWriter(
-                        new OutputStreamWriter(
-                                connectionSocket.getOutputStream())), true);
-        System.out.println("Input requested");
-        output.println("input");
+     /**
+     * Resets socket connection
+     */
+   public void resetConnection() {
+       try {
+           connectionSocket = server.accept();
+           System.out.println("Connection started");
+       } catch (IOException ex) {
+           Logger.getLogger(TcpServer.class.getName()).log(Level.SEVERE, null, ex);
+       }
    }
-   
-   public void write(String msg) throws IOException {
-       PrintWriter output;
-        output = new PrintWriter(
-                new BufferedWriter(
-                        new OutputStreamWriter(
-                                connectionSocket.getOutputStream())), true);
-        System.out.println("Server send: "+msg);
-        output.println(msg);
-        // Wait for response
-        BufferedReader response = new BufferedReader (new InputStreamReader(connectionSocket.getInputStream()));
-        message = response.readLine();
-        if(!"ready".equals(message))
-        {
-            //throw ex
-        }
+    /**
+     * @return string from client.
+     */
+   public String read() {
+       try {
+           if(connectionSocket.isClosed())
+               resetConnection();
+           requestInput();
+           BufferedReader input = new BufferedReader (new InputStreamReader(connectionSocket.getInputStream()));
+           message = input.readLine();
+           System.out.println("Server got: "+message);
+           return message;
+       } catch (IOException ex) {
+           System.out.println("Connection error!");
+           closeConnection();
+       }
+       return "q";
+    }
+   /**
+    * Request input from client
+    */
+   private void requestInput() {
+       try {
+           if(connectionSocket.isClosed())
+               resetConnection();
+           PrintWriter output;
+           output = new PrintWriter(
+                   new BufferedWriter(
+                           new OutputStreamWriter(
+                                   connectionSocket.getOutputStream())), true);
+           System.out.println("Input requested");
+           output.println("input");
+       } catch (IOException ex) {
+           System.out.println("Connection error!");
+           closeConnection();
+       }
+   }
+   /**
+    * Sends message to client
+    * @param msg send message
+    */
+   public void write(String msg) {
+       try {
+           if(connectionSocket.isClosed())
+               resetConnection();
+           PrintWriter output;
+           output = new PrintWriter(
+                   new BufferedWriter(
+                           new OutputStreamWriter(
+                                   connectionSocket.getOutputStream())), true);
+           System.out.println("Server send: "+msg);
+           output.println(msg);
+           // Wait for response
+           BufferedReader response = new BufferedReader (new InputStreamReader(connectionSocket.getInputStream()));
+           message = response.readLine();
+           if(!"ready".equals(message))
+           {
+              System.out.println("Client's response was invalid. Expected: ready. Got: "+message);
+           }
+       } catch (IOException ex) {
+           System.out.println("Connection error!");
+           closeConnection();
+       }
    }
    
 }
