@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Advanced Maths Calculator</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    </head>
+    <body>
+        <h1 class="jumbotron">Greatest Common Divider and Least Common Multiple calculator</h1>
+        <form action="calculate" method="post">
+             <div class="form-group" style="width: 30vw;margin: 1em 0 0 1em">
+                <label for="numbers-input">Insert numbers separated with spaces:</label>
+                <input id="numbers-input" name="numbers" class="input-group"/>
+                <input type="submit" class="btn btn-primary" style="margin-top: 1em"/>
+             </div>
+        </form>
+        <div class="jumbotron" style="margin-top: 2em">
+        <h5  style="display: inline;width:20vw">For history check click here:</h5>
+        <form action="calculate" style="display: inline" method="get">
+            <button class="btn btn-danger" style="margin: 1em">history</button>
+        </form>
+    </body>
+</html>
