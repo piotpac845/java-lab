@@ -21,4 +21,18 @@
             30
         </session-timeout>
     </session-config>
+    <context-param>
+	<param-name>path</param-name>
+	<param-value>jdbc:sqlserver://127.0.0.1:1433;databaseName=java_calculator;</param-value>
+    </context-param>
+    <context-param>
+	<param-name>user</param-name>
+	<param-value>sa</param-value>
+    </context-param>
+    <context-param>
+	<param-name>password</param-name>
+	<param-value>Admin1</param-value>
+    </context-param>
+
+   
 </web-app>

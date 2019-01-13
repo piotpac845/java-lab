@@ -1,59 +1,49 @@
 package servlets;
 
+import data.DbRepository;
 import gcdlcm.exceptions.TooShortArrayException;
 import gcdlcm.exceptions.ZeroNumberException;
-import gcdlcm.models.CalculationArchive;
 import gcdlcm.models.Converter;
 import gcdlcm.models.ConvertingState;
 import gcdlcm.models.GreatestCommonDivisor;
 import gcdlcm.models.LeastCommonMultiple;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javafx.util.Pair;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 
 /**
  * Manages input for calculations from user.
  * @author Piotr Paczuła
- * @version 1.0
+ * @version 1.1
  */
 public class Calculate extends HttpServlet {
 
-    final GreatestCommonDivisor divisor;
-    final LeastCommonMultiple multiple;
-    final Converter converter;
-    final CalculationArchive archive;
+    private final GreatestCommonDivisor divisor;
+    private final LeastCommonMultiple multiple;
+    private final Converter converter;
+    private DbRepository repo;
     
-    public Calculate() {
+    public Calculate() throws ClassNotFoundException, SQLException {
         divisor = new GreatestCommonDivisor();
         multiple = new LeastCommonMultiple();
         converter = new Converter();
-        archive = new CalculationArchive();
+       
+       
     }
-
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String divisorsHistory = archive.getDivisorArchive();
-        String multipleHistory = archive.getMultiplyArchive();
-        request.setAttribute("divHistory", divisorsHistory);
-        request.setAttribute("mulHistory", multipleHistory);
-        getServletContext().getRequestDispatcher("/history").forward(request,response);
-    }
-
+    
+    
+   
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -65,6 +55,20 @@ public class Calculate extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        // Servlet configuration - through initialization
+        ServletConfig config = getServletConfig();
+        // Servlet context
+        ServletContext context = config.getServletContext();
+        String path = context.getInitParameter("path");
+        String user = context.getInitParameter("user");
+        String password = context.getInitParameter("password");
+        try {
+            repo = new DbRepository(path,user,password);
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(Calculate.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         boolean isStupid = false;
         boolean setStupidCookie = false;
         Cookie[] cookies = request.getCookies();
@@ -85,7 +89,7 @@ public class Calculate extends HttpServlet {
                 try{
                     int divisorResult = divisor.calculate();
                     int multipleResult = multiple.calculate();
-                    archive.addResultToArchive(divisorResult, multipleResult);
+                    repo.insertRecord(divisorResult, multipleResult);
                     message = "<h1>Greatest Common divisor is equal to " + divisorResult 
                             + "</h1><h1>Least Common multiple is equal to " + multipleResult + 
                             "</h1>";
@@ -99,7 +103,7 @@ public class Calculate extends HttpServlet {
                     setStupidCookie = true;
                 }
                 catch (Exception ex) {
-                    message = "<h1>Unknown error occured!</h1>";
+                    message = "<h1>Unknown error occured!</h1><p>"+ex.getMessage()+"<p>";
                 }
                 
                 break;
